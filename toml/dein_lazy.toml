@@ -1,0 +1,71 @@
+# dein_lazy.toml
+
+[[plugins]]
+repo= 'Shougo/neosnippet-snippets'
+
+[[plugins]]
+repo = 'Shougo/neosnippet'
+hook_source = '''
+  imap <C-k> <Plug>(neosnippet_expand_or_jump)
+  smap <C-k> <Plug>(neosnippet_expand_or_jump)
+  xmap <C-k> <Plug>(neosnippet_expand_target)
+  if has('conceal')
+    set conceallevel=0 concealcursor=niv
+  endif
+'''
+on_event = 'InsertEnter'
+depends = ['neosnippet-snippets']
+
+[[plugins]]
+repo = 'Shougo/deoplete.nvim'
+hook_source = '''
+  let g:deoplete#enable_at_startup = 1
+
+  inoremap <expr><tab> pumvisible() ? "\<C-n>" : "\<tab>"
+
+  " Expand the completed snippet trigger by <CR>.
+  imap <expr><CR>
+  \ (pumvisible() && neosnippet#expandable()) ?
+  \ "\<Plug>(neosnippet_expand)" : "<C-r>=<SID>my_cr_function()<CR>"
+
+  function! s:my_cr_function() abort
+    return deoplete#close_popup() . "\<CR>"
+  endfunction
+
+  let g:deoplete#enable_camel_case = 0
+  let g:deoplete#enable_ignore_case = 0
+
+  call deoplete#custom#option({
+    \ 'smart_case': v:true,
+    \ 'profile': v:true,
+    \ 'auto_complete_delay': 100,
+    \ 'deoplete#auto_complete_start_length': 1,
+    \ 'deoplete#max_list': 100,
+    \ 'deoplete#enable_refresh_always': 0
+    \ })
+  
+  call deoplete#custom#source(
+    \ 'file', 'enable_buffer_path', v:true)
+'''
+on_event = 'InsertEnter'
+
+[[plugins]]
+repo = 'Shougo/neco-syntax'
+on_event = 'InsertEnter'
+
+
+[[plugins]]
+repo = "puremourning/vimspector"
+on_ft = ["python", "javascript"]
+build = "./install_gadget.py --enable-python --force-enable-node"
+
+[[plugins]]
+repo = 'davidhalter/jedi'
+on_ft = 'python'
+
+[[plugins]]
+repo = 'zchee/deoplete-jedi'
+hook_source = '''
+let g:deoplete#sources#jedi#server_timeout = 20
+'''
+on_ft = 'python'
