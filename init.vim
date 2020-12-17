@@ -58,9 +58,17 @@ let g:python3_host_prog = '/homes/d1007131/.pyenv/versions/neovim3/bin/python'
 
 "=================== dein ============================
 " dein.vim {{{
-"  directory configuration
-let s:config_home = empty($XDG_CONFIG_HOME) ? expand('~/.config') : $XDG_CONFIG_HOME
-let s:dein_config_dir = s:config_home . '/nvim'
+if has('win32') || has('win64')
+    let $NVIMDIR=$USERPROFILE . '/AppData'
+    let s:config_home = $NVIMDIR . '/nvim'
+    let s:dein_config_dir = s:config_home . '/nvim'
+elseif has('unix')
+    let $NVIMDIR=$XDG_CONFIG . '/nvim'
+    let s:config_home = empty($XDG_CONFIG_HOME) ? expand('~/.config') : $XDG_CONFIG_HOME
+    let s:dein_config_dir = s:config_home . '/nvim'
+end
+
+" directory configuration
 if !isdirectory(s:dein_config_dir)
     :call mkdir(s:dein_config_dir, "p")
 endif
@@ -69,10 +77,9 @@ let s:toml_file = s:dein_config_dir . '/toml/dein.toml'
 let s:dein_dir = s:cache_home . '/dein'
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
 
-echo s:cache_home
 "  dein installation
 if !isdirectory(s:dein_repo_dir)
-  echo "install dein"
+  echo "### installing dein...."
   call system('git clone https://github.com/Shougo/dein.vim ' . shellescape(s:dein_repo_dir))
 endif
 
@@ -89,3 +96,42 @@ if has('vim_starting') && dein#check_install()
   call dein#install()
 endif
 " dein.vim }}}
+
+
+""==============================================================================
+""              deinの設定
+""==============================================================================
+"let s:dein_dir = $HOME. '/.cache/dein'
+"let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
+"
+"if &runtimepath !~# '/dein.vim'
+"    if !isdirectory(s:dein_repo_dir)
+"        execute '!git clone https://github.com/Shougo/dein.vim' s:dein_repo_dir
+"    endif
+"    execute 'set runtimepath^=' . s:dein_repo_dir
+"endif
+"
+"if dein#load_state(s:dein_dir)
+"    call dein#begin(s:dein_dir)
+"
+"    let s:rc_dir = $NVIMDIR
+"    if !isdirectory(s:rc_dir)
+"        call mkdir(s:rc_dir, 'p')
+"    endif
+"    let s:toml = s:rc_dir . '/dein.toml'
+"    let s:lazy_toml = s:rc_dir . '/dein_lazy.toml'
+"
+"    call dein#load_toml(s:toml, {'lazy': 0})
+"    call dein#load_toml(s:lazy_toml, {'lazy' : 1})
+"
+"    call dein#end()
+"    call dein#save_state()
+"endif
+"" Required:
+"filetype plugin indent on
+"syntax enable
+"
+"" If you want to install not installed plugins on startup.
+"if dein#check_install()
+"  call dein#install()
+"endif
